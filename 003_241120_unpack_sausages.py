@@ -9,8 +9,8 @@ by sausages. Make sure to ignore other goods, those will be taken care of by
 someone else. Once you have unpacked all the sausages, just lay them out in the
 display counter (string) in the same order in which they came in boxes with one
 space " " in-between every sausage. Oh, and watch out for spoiled or damaged
-sausage packs, did I tell you about those? The sausages are alwaygit s packed in
-fours and each pack contains only one sausage type, so whenever there is any
+sausage packs, did I tell you about those? The sausages are alwaygit s packed
+in fours and each pack contains only one sausage type, so whenever there is any
 irregularity, the sausages are probably spoiled or damaged and the whole pack
 should be thrown out!
 
@@ -21,7 +21,8 @@ spending it all at once!
 
 If the truck arrives completely empty, only with empty boxes or only with goods
 that are not sausages, the display counter will simply stay empty "". Unlike
-truck and boxes that may be empty, every existing product is a non-empty string.
+truck and boxes that may be empty, every existing product is a non-empty
+string.
 """
 
 import re

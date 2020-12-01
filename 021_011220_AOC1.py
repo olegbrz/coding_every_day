@@ -71,7 +71,7 @@ def search(nums, n):
     find a group that sums 2020.
 
     Args:
-        nums (List[int]): input numbers 
+        nums (List[int]): input numbers
         n (int): number of elements in each combination.
 
     Returns:

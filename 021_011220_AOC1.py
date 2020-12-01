@@ -38,10 +38,24 @@ Of course, your expense report is much larger. Find the two entries that sum
 to 2020; what do you get if you multiply them together?
 
 To begin, get your puzzle input.
+
+--- Part Two ---
+The Elves in accounting are thankful for your help; one of them even offers you
+a starfish coin they had left over from a past vacation. They offer you a
+second one if you can find three numbers in your expense report that meet the
+same criteria.
+
+Using the above example again, the three entries that sum to 2020 are 979, 366,
+and 675. Multiplying them together produces the answer, 241861950.
+
+In your expense report, what is the product of the three entries that sum to
+2020?
 """
 
 from requests import get
 from json import load
+from itertools import combinations
+from numpy import prod
 
 with open('021_cookie.json') as c:
     data = load(c)
@@ -52,23 +66,26 @@ headers = {'cookie': data['cookie']}
 r = get('https://adventofcode.com/2020/day/1/input', headers=headers)
 
 
-def search(nums):
-    """search Iterates over a list and compares all permutations
-    of the list to find two numbers than sum 2020.
+def search(nums, n):
+    """search iterates over the list of combinations of groups of n ints to
+    find a group that sums 2020.
+
     Args:
-            nums ([int]): [list of numbers to search trough]
+        nums (List[int]): input numbers 
+        n (int): number of elements in each combination.
 
     Returns:
-            [int]: [the product of the two found numbers]
+        int: the product of the group of numbers that sum 2020.
     """
 
-    for num1 in nums:
-        for num2 in nums:
-            if num1 + num2 == 2020:
-                return num1 * num2
+    nums = list(combinations(nums, n))
+    for num_tup in nums:
+        if sum(num_tup) == 2020:
+            return prod(num_tup)
 
 
 # Transform to int the list of numbers
 data = [int(n) for n in r.text.split('\n')[:-1]]
 
-print(f'Result: {search(data)}')
+print(f'Result part 1: {search(data, 2)}')
+print(f'Result part 2: {search(data, 3)}')

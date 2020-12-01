@@ -52,10 +52,11 @@ In your expense report, what is the product of the three entries that sum to
 2020?
 """
 
-from requests import get
-from json import load
 from itertools import combinations
+from json import load
+
 from numpy import prod
+from requests import get
 
 with open('021_cookie.json') as c:
     data = load(c)

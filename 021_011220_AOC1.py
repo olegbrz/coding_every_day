@@ -58,7 +58,7 @@ from json import load
 from numpy import prod
 from requests import get
 
-with open('021_cookie.json') as c:
+with open('aoc_cookie.json') as c:
     data = load(c)
 
 # Load the cookie from .json

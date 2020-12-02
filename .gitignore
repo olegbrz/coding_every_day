@@ -150,4 +150,4 @@ cython_debug/
 .history/
 
 # Misc
-021_cookie.json
+aoc_cookie.json

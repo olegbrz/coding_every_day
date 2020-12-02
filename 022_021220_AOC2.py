@@ -57,18 +57,7 @@ Given the same example list from above:
 How many passwords are valid according to the new interpretation of the
 policies?
 """
-
-from json import load
-
-from requests import get
-
-with open('aoc_cookie.json') as c:
-    data = load(c)
-
-# Load the cookie from .json
-headers = {'cookie': data['cookie']}
-# GET to the challenge
-r = get('https://adventofcode.com/2020/day/2/input', headers=headers)
+from aoc_helper import get_input
 
 
 def correct_passwords_1(passwords):
@@ -113,7 +102,7 @@ def correct_passwords_2(passwords):
     return counter
 
 
-passwords = r.text.split('\n')[:-1]
+passwords = get_input()
 
 print(f'Result: {correct_passwords_1(passwords)}')
 print(f'Result: {correct_passwords_2(passwords)}')

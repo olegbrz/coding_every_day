@@ -53,18 +53,8 @@ In your expense report, what is the product of the three entries that sum to
 """
 
 from itertools import combinations
-from json import load
-
 from numpy import prod
-from requests import get
-
-with open('aoc_cookie.json') as c:
-    data = load(c)
-
-# Load the cookie from .json
-headers = {'cookie': data['cookie']}
-# GET to the challenge
-r = get('https://adventofcode.com/2020/day/1/input', headers=headers)
+from aoc_helper import get_input
 
 
 def search(nums, n):
@@ -86,7 +76,7 @@ def search(nums, n):
 
 
 # Transform to int the list of numbers
-data = [int(n) for n in r.text.split('\n')[:-1]]
+data = [int(n) for n in get_input()]
 
 print(f'Result part 1: {search(data, 2)}')
 print(f'Result part 2: {search(data, 3)}')

@@ -9,14 +9,14 @@ coordinates in a grid. You make a map (your puzzle input) of the open squares
 (.) and trees (#) you can see. For example:
 
 ..##.......
-#...#...#..
+# ...#...#..
 .#....#..#.
 ..#.#...#.#
 .#...##..#.
 ..#.##.....
 .#.#.#....#
 .#........#
-#.##...#...
+# .##...#...
 #...##....#
 .#..#...#.#
 These aren't the only trees, though; due to something you read about once
@@ -24,14 +24,14 @@ involving arboreal genetics and biome stability, the same pattern repeats to
 the right many times:
 
 ..##.........##.........##.........##.........##.........##.......  --->
-#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
+# ...#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
 .#....#..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
 ..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
 .#...##..#..#...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
 ..#.##.......#.##.......#.##.......#.##.......#.##.......#.##.....  --->
 .#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
 .#........#.#........#.#........#.#........#.#........#.#........#
-#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...
+# .##...#...#.##...#...#.##...#...#.##...#...#.##...#...#.##...#...
 #...##....##...##....##...##....##...##....##...##....##...##....#
 .#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#  --->
 
@@ -50,14 +50,14 @@ The locations you'd check in the above example are marked here with O where
 there was an open square and X where there was a tree:
 
 ..##.........##.........##.........##.........##.........##.......  --->
-#..O#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
+# ..O#...#..#...#...#..#...#...#..#...#...#..#...#...#..#...#...#..
 .#....X..#..#....#..#..#....#..#..#....#..#..#....#..#..#....#..#.
 ..#.#...#O#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#..#.#...#.#
 .#...##..#..X...##..#..#...##..#..#...##..#..#...##..#..#...##..#.
 ..#.##.......#.X#.......#.##.......#.##.......#.##.......#.##.....  --->
 .#.#.#....#.#.#.#.O..#.#.#.#....#.#.#.#....#.#.#.#....#.#.#.#....#
 .#........#.#........X.#........#.#........#.#........#.#........#
-#.##...#...#.##...#...#.X#...#...#.##...#...#.##...#...#.##...#...
+# .##...#...#.##...#...#.X#...#...#.##...#...#.##...#...#.##...#...
 #...##....##...##....##...#X....##...##....##...##....##...##....#
 .#..#...#.#.#..#...#.#.#..#...X.#.#..#...#.#.#..#...#.#.#..#...#.#  --->
 
@@ -88,19 +88,42 @@ What do you get if you multiply together the number of trees encountered on
 each of the listed slopes?
 """
 
+from typing import List, Tuple
 from aoc_helper import get_input
 
 
-def get_trees(tree_map, dx, dy=1):
+def get_trees(tree_map: List[str], dx: int, dy: int = 1) -> int:
+    """get_trees computes the number of trees the path will encounter given a
+    map of trees and a slope (for x and y).
+
+    Args:
+        tree_map (List[str]): map of trees.
+        dx (int): the x slope.
+        dy (int): the y slope. Defaults to 1.
+
+    Returns:
+        [int]: number of trees.
+    """
     trees = 0
     for y in range(0, len(tree_map), dy):
-        point = tree_map[y][int(((y/dy)*dx) % len(tree_map[0]))]
+        x = int(((y/dy)*dx) % len(tree_map[0]))
+        point = tree_map[y][x]
         if point == '#':
             trees += 1
     return trees
 
 
-def get_trees_by_slopes(tree_map, slopes):
+def get_trees_by_slopes(tree_map: List[str], slopes: List[Tuple[int]]) -> int:
+    """get_trees_by_slopes computes all trees for all slopes provided by the 
+    input.
+
+    Args:
+        tree_map (List[str]): map of trees.
+        slopes (List[Tuple[int]]): list of all slopes to compute.
+
+    Returns:
+        int: cartesian product of the results.
+    """
     trees = 1
     for slope in slopes:
         trees *= get_trees(tree_map, slope[0], slope[1])

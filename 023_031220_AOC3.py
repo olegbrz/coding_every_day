@@ -102,11 +102,11 @@ def get_trees(tree_map: List[str], dx: int, dy: int = 1) -> int:
         dy (int): the y slope. Defaults to 1.
 
     Returns:
-        [int]: number of trees.
+        int: number of trees.
     """
     trees = 0
     for y in range(0, len(tree_map), dy):
-        x = int(((y/dy)*dx) % len(tree_map[0]))
+        x = int(((y / dy) * dx) % len(tree_map[0]))
         point = tree_map[y][x]
         if point == '#':
             trees += 1
@@ -114,7 +114,7 @@ def get_trees(tree_map: List[str], dx: int, dy: int = 1) -> int:
 
 
 def get_trees_by_slopes(tree_map: List[str], slopes: List[Tuple[int]]) -> int:
-    """get_trees_by_slopes computes all trees for all slopes provided by the 
+    """get_trees_by_slopes computes all trees for all slopes provided by the
     input.
 
     Args:

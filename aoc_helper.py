@@ -1,9 +1,17 @@
 from sys import argv
 from requests import get
 from json import load
+from typing import List
 
 
-def get_input():
+def get_input() -> List[str]:
+    """get_input gets the AoC input of the day based on the name of the file,
+    which should have this format: 000_010120_AOCx.py, where x is the day of
+    the challenge.
+
+    Returns:
+        List[str]: list of strings from the input.
+    """
     with open('aoc_cookie.json') as c:
         data = load(c)
 

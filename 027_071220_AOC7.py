@@ -128,8 +128,8 @@ def contains(color: str, bags_dict: Dict[str, Dict], counter: int = 0) -> bool:
         return True
     elif not bags_dict[color].keys():
         return False
-    for i in bags_dict[color]:
-        counter += contains(i, bags_dict, counter)
+    for bag in bags_dict[color]:
+        counter += contains(bag, bags_dict, counter)
     return bool(counter)
 
 

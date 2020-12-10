@@ -177,18 +177,38 @@ What is the total number of distinct ways you can arrange the adapters to
 connect the charging outlet to your device?
 """
 
+from typing import List
 from aoc_helper import get_input
 from numpy import diff
 
 data = list(map(int, get_input()))
 
 
-def get_diffs(data):
+def get_diffs(data: List[int]) -> int:
+    """get_diffs its a helper function to compute the product of the derivative
+    of the input data.
+
+    Args:
+        data (List[int]): input data converted to list of ints.
+
+    Returns:
+        int: the product of the count of values where the derivative equals
+        1 and 3.
+    """
     temp = list(diff(sorted(data.copy() + [0, max(data) + 3])))
     return temp.count(1) * temp.count(3)
 
 
-def get_combos(data):
+def get_combos(data: List[int]) -> int:
+    """get_combos computes all the combinations of the plug converters folowing
+    the proposed rules.
+
+    Args:
+        data (List[int]): input data converted to list of ints.
+
+    Returns:
+        int: number of possible combinations of converters.
+    """
     temp = sorted(data.copy() + [0, max(data)+3])
     lookup = {0: 1, 1: 1, 2: 2,
               3: 4, 4: 7, 5: 8}

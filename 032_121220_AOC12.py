@@ -128,10 +128,10 @@ def compute_final(data):
             elif facing == 'S':
                 y -= ins[1]
 
-            elif ins[0] == 'L':
-                facing = card[(card.index(facing)+(ins[1])//90) % 4]
-            elif ins[0] == 'R':
-                facing = card[(card.index(facing)-(ins[1])//90) % 4]
+        elif ins[0] == 'L':
+            facing = card[(card.index(facing)+(ins[1])//90) % 4]
+        elif ins[0] == 'R':
+            facing = card[(card.index(facing)-(ins[1])//90) % 4]
     return abs(x) + abs(y)
 
 
@@ -145,6 +145,7 @@ def compute_final_2(data):
     sy = 0
     wx = 10
     wy = 1
+
     for ins in data:
         ins = p_i(ins)
         if ins[0] == 'N':
@@ -166,4 +167,10 @@ def compute_final_2(data):
         elif ins[0] == 'R':
             wx, wy = rotate(wx, wy, math.radians(ins[1]))
 
-    print(abs(sx) + abs(sy))
+    return abs(sx) + abs(sy)
+
+
+data = get_input()
+
+print(f'Result: {compute_final(data)}')
+print(f'Result: {compute_final_2(data)}')

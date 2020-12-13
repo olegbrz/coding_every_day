@@ -94,83 +94,86 @@ Figure out where the navigation instructions actually lead. What is the
 Manhattan distance between that location and the ship's starting position?
 """
 
+from typing import List, Tuple
 from aoc_helper import get_input
 import math
 
 
-def p_i(instruction):
+def parse_instruction(instruction) -> Tuple[str, int]:
+    """parse_instruction split an str instructions in str instruction and int
+    value.
+    """
     return instruction[0], int(instruction[1:])
 
 
-def compute_final(data):
-    x = 0
-    y = 0
-    facing = 'E'
-    card = ['E', 'N', 'W', 'S']
-    for ins in data:
-        ins = p_i(ins)
-        if ins[0] == 'N':
-            y += ins[1]
-        elif ins[0] == 'W':
-            x -= ins[1]
-        elif ins[0] == 'E':
-            x += ins[1]
-        elif ins[0] == 'S':
-            y -= ins[1]
+def compute_dist1(data: List[str]) -> int:
+    """compute_dist1 computes the Mantattan's distance from origin to final point
+    of the ship given a set of instructions.
 
-        elif ins[0] == 'F':
-            if facing == 'N':
-                y += ins[1]
-            elif facing == 'E':
-                x += ins[1]
-            elif facing == 'W':
-                x -= ins[1]
-            elif facing == 'S':
-                y -= ins[1]
+    Args:
+        data (List[str]): set of instructions
 
-        elif ins[0] == 'L':
-            facing = card[(card.index(facing)+(ins[1])//90) % 4]
-        elif ins[0] == 'R':
-            facing = card[(card.index(facing)-(ins[1])//90) % 4]
+    Returns:
+        int: distance from origin to final (Manhattan's)
+    """
+    x, y = 0, 0
+    face = 'E'
+    p = ['E', 'N', 'W', 'S']
+
+    for i in data:
+        i, v = parse_instruction(i)
+        if i in ['N', 'W', 'E', 'S']:
+            x += (v*(i == 'E') - v*(i == 'W'))
+            y += (v*(i == 'N') - v*(i == 'S'))
+        elif i == 'F':
+            y += (v*(face == 'N')-v*(face == 'S'))
+            x += (v*(face == 'E')-v*(face == 'W'))
+        elif i in ['L', 'R']:
+            turns = v//90
+            face = p[(p.index(face) +
+                      (turns * (i == 'L')) -
+                      (turns * (i == 'R'))) % 4]
+
     return abs(x) + abs(y)
 
 
-def compute_final_2(data):
-    def rotate(x, y, radians):
+def compute_dist2(data: List[str]) -> int:
+    """compute_dist2 computes the Mantattan's distance from origin to final point
+    of the ship given a set of instructions considering that the instructions
+    modify a waypoint and not the ship itself.
+
+    Args:
+        data (List[str]): set of instructions
+
+    Returns:
+        int: distance from origin to final (Manhattan's)
+    """
+    def rotate(x, y, degrees):
+        """rotate rotates a 2D point with origin as centre a given number of
+        degrees.
+        """
+        radians = math.radians(degrees)
         xx = round(x * math.cos(radians) + y * math.sin(radians))
         yy = round(-x * math.sin(radians) + y * math.cos(radians))
         return xx, yy
 
-    sx = 0
-    sy = 0
-    wx = 10
-    wy = 1
-
-    for ins in data:
-        ins = p_i(ins)
-        if ins[0] == 'N':
-            wy += ins[1]
-        elif ins[0] == 'W':
-            wx -= ins[1]
-        elif ins[0] == 'E':
-            wx += ins[1]
-        elif ins[0] == 'S':
-            wy -= ins[1]
-
-        elif ins[0] == 'F':
-            sx += ins[1] * wx
-            sy += ins[1] * wy
-
-        elif ins[0] == 'L':
-            wx, wy = rotate(wx, wy, math.radians(-ins[1]))
-
-        elif ins[0] == 'R':
-            wx, wy = rotate(wx, wy, math.radians(ins[1]))
+    sx, sy, wx, wy = [0, 0, 10, 1]
+    for i in data:
+        i, v = parse_instruction(i)
+        if i in ['N', 'W', 'E', 'S']:
+            wy += (v*(i == 'N') - v*(i == 'S'))
+            wx += (v*(i == 'E') - v*(i == 'W'))
+        elif i == 'F':
+            sx += v * wx
+            sy += v * wy
+        elif i in ['L', 'R']:
+            wx, wy = rotate(
+                wx, wy, v*(i == 'R') - v*(i == 'L'))
 
     return abs(sx) + abs(sy)
 
 
 data = get_input()
 
-print(f'Result: {compute_final(data)}')
-print(f'Result: {compute_final_2(data)}')
+print(f'Result: {compute_dist1(data)}')
+print(f'Result: {compute_dist2(data)}')

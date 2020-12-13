@@ -152,6 +152,15 @@ data = get_input()
 
 
 def get_first_bus(data: List[str]) -> int:
+    """get_first_bus computes the product of bus ID and waiting time of the
+    first bus from the timestamp of arrival.
+
+    Args:
+        data (List[str]): list of input.
+
+    Returns:
+        int: ID * waiting time
+    """
     timestamp = int(data[0])
     bus_id = list(
         map(int, (filter(lambda x: x.isnumeric(), data[1].split(',')))))
@@ -170,6 +179,15 @@ def get_first_bus(data: List[str]) -> int:
 
 
 def match_offsets(data: List[str]) -> int:
+    """match_offsets computes the first timestamp which matches the input list
+    of bus IDs and their offsets.
+
+    Args:
+        data (List[str]): list of input.
+
+    Returns:
+        int: first timestamp to match the rules.
+    """
 
     def cn_remainder(n, a):
         """https://rosettacode.org/wiki/Chinese_remainder_theorem#Python"""
@@ -196,7 +214,8 @@ def match_offsets(data: List[str]) -> int:
 
     offsets_id = enumerate(data[1].split(','))
     offsets_id = filter(lambda x: x[1].isnumeric(), offsets_id)
-    offsets_id = list(map(lambda x: (x[0], int(x[1])), offsets_id))
+    offsets_id = map(lambda x: (x[0], int(x[1])), offsets_id)
+    offsets_id = list(offsets_id)
 
     bus_id = [i[1] for i in offsets_id]
     offsets = [i[0] for i in offsets_id]

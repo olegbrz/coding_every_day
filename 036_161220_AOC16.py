@@ -109,21 +109,19 @@ my_ticket = list(map(int, data[22].split(',')))
 nearby_tickets = [list(map(int, line.split(','))) for line in data[25:]]
 
 rules2dict = {}
-rules_raw = []
 for line, rule in zip(data[:20], rules):
     rule_name = line.split(': ')[0]
     first1, second1 = list(map(int, rule[0].split('-')))
     first2, second2 = list(map(int, rule[1].split('-')))
     rules2dict[rule_name] = [[first1, second1],
                              [first2, second2]]
-    rules_raw.append([first1, second1])
-    rules_raw.append([first2, second2])
 
 
 def belongs_to_field(rules, number):
     for rule in rules:
-        if rule[0] <= number <= rule[1]:
-            return True
+        for ran in rules[rule]:
+            if ran[0] <= number <= ran[1]:
+                return True
     return False
 
 
@@ -141,18 +139,18 @@ def get_corrects(tickets, rules):
     return correct_tickets
 
 
-def compute_error(rules_raw, tickets):
+def compute_error(rules, tickets):
     error = 0
     for ticket in tickets:
         for field in ticket:
-            if not belongs_to_field(rules_raw, field):
+            if not belongs_to_field(rules, field):
                 error += field
     return error
 
 
 def get_indices(rules, your, nearby):
 
-    corrects = get_corrects(nearby, rules_raw)
+    corrects = get_corrects(nearby, rules)
     possible = {rule: [] for rule in rules}
 
     for rule in rules:
@@ -183,5 +181,5 @@ def get_indices(rules, your, nearby):
     return result
 
 
-print(f'Result {compute_error(rules_raw, nearby_tickets)}')
+print(f'Result {compute_error(rules2dict, nearby_tickets)}')
 print(f'Result {get_indices(rules2dict, my_ticket, nearby_tickets)}')

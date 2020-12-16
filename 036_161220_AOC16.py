@@ -104,31 +104,84 @@ from aoc_helper import get_input
 
 data = get_input()
 
-rules = data[:20]
-your = data[22]
-nearby = [list(map(int, i.split(','))) for i in data[25:]]
+rules = [line.split(': ')[1].split(' or ') for line in data[:20]]
+my_ticket = list(map(int, data[22].split(',')))
+nearby_tickets = [list(map(int, line.split(','))) for line in data[25:]]
 
-rulstack = []
-rules = [i.split(': ')[1].split(' or ') for i in rules]
-for i in rules:
-    for j in i:
-        rulstack.append([int(j.split('-')[0]), int(j.split('-')[1])])
+rules2dict = {}
+rules_raw = []
+for line, rule in zip(data[:20], rules):
+    rule_name = line.split(': ')[0]
+    first1, second1 = list(map(int, rule[0].split('-')))
+    first2, second2 = list(map(int, rule[1].split('-')))
+    rules2dict[rule_name] = [[first1, second1],
+                             [first2, second2]]
+    rules_raw.append([first1, second1])
+    rules_raw.append([first2, second2])
 
 
-def check_all(rules, n):
-    for i in rules:
-        if i[0] <= n <= i[1]:
+def belongs_to_field(rules, number):
+    for rule in rules:
+        if rule[0] <= number <= rule[1]:
             return True
     return False
 
 
-def compute_error(rulstack, tickets):
-    error = 0
-    for ticket in nearby:
+def get_corrects(tickets, rules):
+
+    correct_tickets = []
+    is_correct = True
+    for ticket in tickets:
         for field in ticket:
-            if not check_all(rulstack, field):
+            if not belongs_to_field(rules, field):
+                is_correct = False
+        if is_correct:
+            correct_tickets.append(ticket)
+        is_correct = True
+    return correct_tickets
+
+
+def compute_error(rules_raw, tickets):
+    error = 0
+    for ticket in tickets:
+        for field in ticket:
+            if not belongs_to_field(rules_raw, field):
                 error += field
     return error
 
 
-print(f'Result {compute_error(rulstack, nearby)}')
+def get_indices(rules, your, nearby):
+
+    corrects = get_corrects(nearby, rules_raw)
+    possible = {rule: [] for rule in rules}
+
+    for rule in rules:
+        for i in range(len(corrects[0])):
+            match = True
+            for j in corrects:
+                f = rules[rule][0]
+                s = rules[rule][1]
+                if not (f[0] <= j[i] <= f[1] or
+                        s[0] <= j[i] <= s[1]):
+                    match = False
+            if match:
+                possible[rule].append(i)
+    assigned = []
+
+    for i in range(len(rules)+1):
+        for key in possible:
+            if (type(possible[key]) == list and
+                    len(possible[key]) == i):
+                for col in possible[key]:
+                    if col not in assigned:
+                        possible[key] = col
+                        assigned.append(col)
+    result = 1
+    for i in possible:
+        if 'departure' in i:
+            result *= your[possible[i]]
+    return result
+
+
+print(f'Result {compute_error(rules_raw, nearby_tickets)}')
+print(f'Result {get_indices(rules2dict, my_ticket, nearby_tickets)}')

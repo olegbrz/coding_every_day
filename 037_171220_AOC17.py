@@ -442,11 +442,23 @@ def get_neighbours(grid, point):
     def trim_neg(x): return 0 if x < 0 else x
     neighbours = list(grid[trim_neg(point[0]-1):trim_neg(point[0]+2),
                            trim_neg(point[1]-1):trim_neg(point[1]+2),
-                           trim_neg(point[2]-1):trim_neg(point[2]+2)].flat)
-    actives = neighbours.count('#')
-    if grid[point] == '#':
+                           trim_neg(point[2]-1):trim_neg(point[2]+2)])
+    actives = np.count_nonzero(neighbours)
+    if grid[point]:
         actives -= 1
     return actives
+
+
+def get_neighbours4d(grid, point):
+    def trim_neg(x): return 0 if x < 0 else x
+    neighbours = list(grid[trim_neg(point[0]-1):trim_neg(point[0]+2),
+                           trim_neg(point[1]-1):trim_neg(point[1]+2),
+                           trim_neg(point[2]-1):trim_neg(point[2]+2),
+                           trim_neg(point[3]-1):trim_neg(point[3]+2)])
+    active = np.count_nonzero(neighbours)
+    if grid[(point)]:
+        active -= 1
+    return active
 
 
 def compute_grid(grid, cycle):
@@ -455,30 +467,49 @@ def compute_grid(grid, cycle):
         for row in range(len(grid[0])):
             for col in range(len(grid[0, 0])):
                 stats = get_neighbours(grid, (layer, row, col))
-                if grid[layer, row, col] == '#' and not (stats in [2, 3]):
-                    grid_temp[layer, row, col] = '.'
-                elif grid[layer, row, col] == '.' and stats == 3:
-                    grid_temp[layer, row, col] = '#'
+                if grid[layer, row, col] and not (stats in [2, 3]):
+                    grid_temp[layer, row, col] = False
+                elif not grid[layer, row, col] and stats == 3:
+                    grid_temp[layer, row, col] = True
     if cycle > 1:
         return compute_grid(grid_temp, cycle - 1)
     elif cycle == 1:
-        return grid_temp
+        return np.count_nonzero(grid_temp)
+
+
+def compute_grid4d(grid, cycle):
+    grid_temp = grid.copy()
+    for state in range(len(grid)):
+        for layer in range(len(grid[0])):
+            for row in range(len(grid[0, 0])):
+                for col in range(len(grid[0, 0, 0])):
+                    stats = get_neighbours4d(grid, (state, layer, row, col))
+                    if grid[state, layer, row, col] and not (stats in [2, 3]):
+                        grid_temp[state, layer, row, col] = False
+                    elif not grid[state, layer, row, col] and stats == 3:
+                        grid_temp[state, layer, row, col] = True
+    if cycle > 1:
+        return compute_grid4d(grid_temp, cycle - 1)
+    elif cycle == 1:
+        return np.count_nonzero(grid_temp)
 
 
 data = get_input()
 
-input_matrix = np.array([list(i) for i in data])
-input_matrix = np.pad(input_matrix, (16, 16),
-                      mode='constant', constant_values='.')
+space_len = 20
+transf = [[True if j == '#' else False for j in i] for i in data]
+input_matrix = np.array(transf)
+input_matrix = np.pad(input_matrix, ((space_len-8)//2, (space_len-8)//2),
+                      mode='constant', constant_values=False)
 
-target_matrix = np.full((40, 40, 40), '.', dtype=np.str)
-target_matrix[18] = input_matrix
+# 3D
+tensor = np.full((13, space_len, space_len), False, dtype=np.bool)
+tensor[6] = input_matrix
 
-counter_a = 0
-for i in compute_grid(target_matrix, 6):
-    for j in i:
-        for k in j:
-            if k == '#':
-                counter_a += 1
+# 4D
+tesseract = np.full((13, 13, space_len, space_len), False, dtype=np.bool)
+tesseract[6, 6] = input_matrix
 
-print(f'Result: {counter_a}')
+
+print(f'Result: {compute_grid(tensor, 6)}')
+print(f'Result: {compute_grid4d(tesseract, 6)}')

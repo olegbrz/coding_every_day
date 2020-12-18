@@ -66,7 +66,7 @@ as follows:
   3   *   7   *  11
      21       *  11
          231
-         
+
 Here are the other examples from above:
 
 1 + (2 * 3) + (4 * (5 + 6)) still becomes 51.
@@ -95,6 +95,7 @@ def find_close_parenthesis(line):
 
 def eval_no_precedence(line):
     i = 0
+    operator = ''
     while line[i] == '(':
         i += 1
     current = line[i]
@@ -116,8 +117,8 @@ def eval_no_precedence(line):
 def eval_precedence(inp):
     line = inp.copy()
     while '(' in line:
-        l = line.index('(')
-        i = l+1
+        parenthesis_i = line.index('(')
+        i = parenthesis_i+1
         balance = 1
         while balance:
             if line[i] == '(':
@@ -125,7 +126,7 @@ def eval_precedence(inp):
             elif line[i] == ')':
                 balance -= 1
             i += 1
-        line[l:i] = eval_precedence(line[l+1:i-1])
+        line[parenthesis_i:i] = eval_precedence(line[parenthesis_i+1:i-1])
     while '+' in line:
         p = line.index('+')
         line[p-1:p+2] = [line[p-1] + line[p+1]]

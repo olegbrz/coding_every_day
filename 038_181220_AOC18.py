@@ -113,10 +113,40 @@ def eval_no_precedence(line):
     return current
 
 
+def eval_precedence(inp):
+    line = inp.copy()
+    while '(' in line:
+        l = line.index('(')
+        i = l+1
+        balance = 1
+        while balance:
+            if line[i] == '(':
+                balance += 1
+            elif line[i] == ')':
+                balance -= 1
+            i += 1
+        line[l:i] = eval_precedence(line[l+1:i-1])
+    while '+' in line:
+        p = line.index('+')
+        line[p-1:p+2] = [line[p-1] + line[p+1]]
+    while '*' in line:
+        m = line.index('*')
+        line[m-1:m+2] = [line[m-1] * line[m+1]]
+    return line
+
+
 data = get_input()
 
-result = 0
-for line in data:
-    result += eval_no_precedence(line.replace(' ', ''))
+result_1 = 0
+result_2 = 0
 
-print(f'Result: {result}')
+for line in data:
+    line = line.replace(' ', '')
+    result_1 += eval_no_precedence(line)
+    result_2 += eval_precedence(list(map(lambda x: int(x)
+                                         if x.isnumeric() else x,
+                                         list(line))))[0]
+
+
+print(f'Result: {result_1}')
+print(f'Result: {result_2}')
